@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:keyviz/windows/settings/widgets/hotkey_input.dart';
 import 'package:provider/provider.dart';
+import 'package:window_manager/window_manager.dart';
 
 import 'package:keyviz/config/config.dart';
 import 'package:keyviz/providers/key_event.dart';
+import 'package:keyviz/providers/key_style.dart';
 
 import '../widgets/widgets.dart';
 
@@ -55,6 +57,22 @@ class GeneralTabView extends StatelessWidget {
                 },
               );
             },
+          ),
+        ),
+        const Divider(),
+        PanelItem(
+          title: "Always On Top",
+          subtitle: "Keep visualization window above all other windows. "
+              "When disabled, window will stay behind focused applications",
+          action: Selector<KeyStyleProvider, bool>(
+            selector: (_, keyStyle) => keyStyle.alwaysOnTop,
+            builder: (_, alwaysOnTop, __) => XSwitch(
+              value: alwaysOnTop,
+              onChange: (bool value) {
+                context.keyStyle.alwaysOnTop = value;
+                _updateWindowAlwaysOnTop(value);
+              },
+            ),
           ),
         ),
         const Divider(),
@@ -117,6 +135,15 @@ class GeneralTabView extends StatelessWidget {
         elevation: 0,
       ),
     );
+  }
+
+  void _updateWindowAlwaysOnTop(bool alwaysOnTop) async {
+    try {
+      await windowManager.setAlwaysOnTop(alwaysOnTop);
+    } catch (e) {
+      // Handle any errors if the window manager is not available
+      print('Error setting always on top: $e');
+    }
   }
 }
 

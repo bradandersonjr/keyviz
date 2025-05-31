@@ -187,6 +187,10 @@ class KeyStyleProvider extends ChangeNotifier {
   // mouse click border color
   Color _clickColor = Colors.grey[100]!;
 
+  // ----- Window -----
+  // always on top setting - when true, window stays above all other windows
+  bool _alwaysOnTop = true;
+
   KeyCapStyle get keyCapStyle => _keyCapStyle;
 
   bool get differentColorForModifiers => _differentColorForModifiers;
@@ -284,6 +288,8 @@ class KeyStyleProvider extends ChangeNotifier {
   MouseClickAnimation get clickAnimation => _clickAnimation;
   double get cursorHighlightSize => _fontSize * 4;
   Color get clickColor => _clickColor;
+
+  bool get alwaysOnTop => _alwaysOnTop;
 
   // key cap properties
   Size get minContainerSize {
@@ -690,6 +696,11 @@ class KeyStyleProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  set alwaysOnTop(bool value) {
+    _alwaysOnTop = value;
+    notifyListeners();
+  }
+
   Map<String, dynamic> get toJson => {
         _JsonKeys.keyCapStyle: _keyCapStyle.name,
         _JsonKeys.fontSize: _fontSize,
@@ -722,6 +733,7 @@ class KeyStyleProvider extends ChangeNotifier {
         _JsonKeys.margin: _margin,
         _JsonKeys.clickAnimation: _clickAnimation.name,
         _JsonKeys.clickColor: _clickColor.toHex(),
+        _JsonKeys.alwaysOnTop: _alwaysOnTop,
       };
 
   _updateFromJson() async {
@@ -918,6 +930,8 @@ class KeyStyleProvider extends ChangeNotifier {
 
     _clickColor = HexColor.fromHex(data[_JsonKeys.clickColor] ?? "e6e6e6");
 
+    _alwaysOnTop = data[_JsonKeys.alwaysOnTop] ?? _Defaults.alwaysOnTop;
+
     notifyListeners();
   }
 
@@ -953,6 +967,7 @@ class KeyStyleProvider extends ChangeNotifier {
     _margin = _Defaults.margin;
     _clickAnimation = _Defaults.clickAnimation;
     _clickColor = _Defaults.clickColor;
+    _alwaysOnTop = _Defaults.alwaysOnTop;
 
     notifyListeners();
   }
@@ -990,6 +1005,7 @@ class _JsonKeys {
   static const margin = "margin";
   static const clickAnimation = "click_animation";
   static const clickColor = "click_color";
+  static const alwaysOnTop = "always_on_top";
 }
 
 class _Defaults {
@@ -1024,4 +1040,5 @@ class _Defaults {
   static const margin = 80.0;
   static const clickAnimation = MouseClickAnimation.focus;
   static const clickColor = Color(0xffe6e6e6);
+  static const alwaysOnTop = true;
 }

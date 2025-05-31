@@ -8,6 +8,7 @@ import 'package:macos_window_utils/macos_window_utils.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'app.dart';
+import 'domain/vault/vault.dart';
 
 void main() async {
   // ensure flutter plugins are intialized and ready to use
@@ -25,14 +26,18 @@ void main() async {
 
   runApp(const KeyvizApp());
 
-  _initWindow();
+  await _initWindow();
 }
 
 _initWindow() async {
+  // Load the alwaysOnTop setting from storage
+  final styleData = await Vault.loadStyleData();
+  final alwaysOnTop = styleData?['always_on_top'] ?? true;
+
   await windowManager.waitUntilReadyToShow(
     WindowOptions(
       skipTaskbar: true,
-      alwaysOnTop: true,
+      alwaysOnTop: alwaysOnTop,
       fullScreen: !Platform.isMacOS,
       titleBarStyle: TitleBarStyle.hidden,
     ),
